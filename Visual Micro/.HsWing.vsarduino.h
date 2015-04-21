@@ -61,9 +61,6 @@ extern "C" void __cxa_pure_virtual() {;}
 #include <HsWing.ino>
 #include <BMA150.cpp>
 #include <BMA150.h>
-#include <CommunicationUtils.cpp>
-#include <CommunicationUtils.h>
-#include <DebugUtils.h>
 #include <HsCommunicator.cpp>
 #include <HsCommunicator.h>
 #include <HsFilter.cpp>
@@ -74,11 +71,6 @@ extern "C" void __cxa_pure_virtual() {;}
 #include <I2Cdev.h>
 #include <MPU6050.cpp>
 #include <MPU6050.h>
-#include <MPU6050_6Axis_MotionApps20.h>
-#include <MPU6050_9Axis_MotionApps41.h>
-#include <calibration.h>
-#include <helper_3dmath.h>
 #include <srf08.cpp>
 #include <srf08.h>
-#include <vector_math.h>
 #endif
