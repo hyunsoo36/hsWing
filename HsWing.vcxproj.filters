@@ -31,31 +31,10 @@
     <ClInclude Include="HsCommunicator.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="calibration.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="CommunicationUtils.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="vector_math.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="DebugUtils.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="I2Cdev.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="MPU6050_9Axis_MotionApps41.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="helper_3dmath.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="MPU6050.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="MPU6050_6Axis_MotionApps20.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="BMA150.h">
@@ -73,9 +52,6 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="HsCommunicator.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="CommunicationUtils.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="I2Cdev.cpp">
