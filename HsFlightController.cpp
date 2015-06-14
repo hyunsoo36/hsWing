@@ -24,7 +24,7 @@ void HsFlightController::AngularControl(double dt) {
 	yaw_err_integral += yaw_err * dt;
 	yaw_i = yaw_err_integral * i_gain_yaw;
 
-	// integral wind_up
+	// integral wind_up 
 	if(roll_err_integral > i_wind_up_limit) { 
 		roll_err_integral = i_wind_up_limit;
 	}
@@ -141,12 +141,12 @@ HsFlightController::~HsFlightController() {
 
 void HsFlightController::initialize() {
 
-	p_gain = 3.2;
+	p_gain = 1.0;//2.0;//2.2;
 	i_gain = 0;//0.3;
 	d_gain = 0.00;
 
-	p_gain_ar_roll = 0.14;//0.16;
-	p_gain_ar_pitch = 0.14;//0.16;
+	p_gain_ar_roll = 0.10;//0.15;//0.17;//0.16;
+	p_gain_ar_pitch = 0.10;//0.15;//0.17;//0.16;
 
 	p_gain_yaw = 0.38;
 	i_gain_yaw = 0;//0.10;

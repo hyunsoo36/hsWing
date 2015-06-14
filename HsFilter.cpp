@@ -71,6 +71,28 @@ void HsFilter::integralYaw() {
 	
 }
 
+void HsFilter::removeGravity() {
+
+	zeroG_ax = m_ax - (-sin( m_pitch_rad ));
+	zeroG_ay = m_ay - (cos( m_pitch_rad )  * sin( m_roll_rad ));
+	zeroG_az = m_az - (cos( m_pitch_rad )  * cos( m_roll_rad ));
+
+}
+void HsFilter::integralAccel() {
+	vel_x = vel_x + zeroG_ax * m_dt;
+	vel_y = vel_y + zeroG_ay * m_dt;
+	vel_z = vel_z + zeroG_az * m_dt;
+
+
+}
+
+void HsFilter::estimatePosition() {
+
+	pos_x = pos_x + vel_x * m_dt;
+	pos_y = pos_y + vel_y * m_dt;
+
+}
+
 double HsFilter::alt_filter(int ultra, int length) {
 	alt_avg = 0;
 	alt_sum = 0;
@@ -169,6 +191,9 @@ void HsFilter::initialize(int ax, int ay, int az) {
 	m_az = (double)az / 256.0;
 	m_roll = atan( m_ay / sqrt(m_ax*m_ax+m_az*m_az) ) * 57.3;
 	m_pitch = -atan( m_ax / sqrt(m_ay*m_ay+m_az*m_az) ) * 57.3;
+
+	vel_x = 0; vel_y = 0; vel_z = 0;
+	pos_x = 0; pos_y = 0;
 }
 
 void HsFilter::destroy() {

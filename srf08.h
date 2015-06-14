@@ -18,7 +18,7 @@
 #define SRF08_MAX_ANALOGUE_GAIN_1025	0x1F
 #define SRG08_RANGE_DATA_START_ADDRESS	0x02			// Byte for start of ranging data
 
-#define HS_SRF08_SAMPLING_TIME 0.035
+#define HS_SRF08_SAMPLING_TIME 0.05//.035
 
 
 #include "I2Cdev.h"

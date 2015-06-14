@@ -8,6 +8,7 @@
 // HsCommunicator 클래스는 전송받은 데이터를 링버퍼를 통해 골라내는 역할을 수행한다.
 
 #include "d:\Program Files\arduino-1.0.3_test\hardware\arduino\cores\arduino\HardwareSerial.h"
+//#include "Overmind.h"
 
 #ifdef HS_RINGBUFFER
 #define packetLength  3
@@ -24,7 +25,12 @@
 #define HS_PACKET_HEADER1 0xEF
 #define HS_PACKET_HEADER2 0xFE
 #define HS_PACKET_TAIL 0xFF
+
+#ifndef WIRELESS_DEBUGGING
 #define HS_SERIAL_DELAY 0.05
+#else
+#define HS_SERIAL_DELAY 0.01
+#endif
 
 
 //byte dataBuffer[packetLength];
@@ -36,7 +42,7 @@ private:
 	unsigned char buffer[HS_BUFFER_LENGTH];	// for recv
 	uint8_t packet[HS_PACKET_LENGTH];			// for send
 	uint8_t data[HS_PACKET_LENGTH-4];			// consider headers, tails, length byte
-
+	int safe_cnt;
 #ifdef HS_RINGBUFFER
 	unsigned char ringBuffer[ringLength];
 	//byte dataBuffer[packetLength];
