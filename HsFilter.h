@@ -36,8 +36,8 @@ public:
 	double roll_gyro_dot, pitch_gyro_dot, yaw_gyro_dot;
 	double isFirst;
 	double zeroG_ax, zeroG_ay, zeroG_az;
-	double vel_x, vel_y, vel_z;
-	double pos_x, pos_y;
+	double vel_xa, vel_ya, vel_za;
+	//double pos_x, pos_y;
 	//int m_gx1;
 	//double integral_gx_trapez;
 
@@ -57,9 +57,10 @@ public:
 	double generalMeanFilter(double* q, double len, double data);
 	void GyroToEuler();
 	double alt_filter(int ultra, int length);
-	void removeGravity();
-	void integralAccel();
-	void estimatePosition();
+
+	void estimateVelbyAccel();
+	void estimateVelbyGyro();
+
 	
 	// getter, setter method
 	void setRawData(int ax, int ay, int az, int gx, int gy, int gz);	// ÇÊ¼ö

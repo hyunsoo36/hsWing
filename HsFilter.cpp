@@ -71,25 +71,25 @@ void HsFilter::integralYaw() {
 	
 }
 
-void HsFilter::removeGravity() {
+
+void HsFilter::estimateVelbyAccel() {
 
 	zeroG_ax = m_ax - (-sin( m_pitch_rad ));
 	zeroG_ay = m_ay - (cos( m_pitch_rad )  * sin( m_roll_rad ));
 	zeroG_az = m_az - (cos( m_pitch_rad )  * cos( m_roll_rad ));
 
+	vel_xa = vel_xa + zeroG_ax * m_dt;
+	vel_ya = vel_ya + zeroG_ay * m_dt;
+	vel_za = vel_za + zeroG_az * m_dt;
+
+	//pos_x = pos_x + vel_x * m_dt;
+	//pos_y = pos_y + vel_y * m_dt;
+
 }
-void HsFilter::integralAccel() {
-	vel_x = vel_x + zeroG_ax * m_dt;
-	vel_y = vel_y + zeroG_ay * m_dt;
-	vel_z = vel_z + zeroG_az * m_dt;
 
+void HsFilter::estimateVelbyGyro() {
 
-}
-
-void HsFilter::estimatePosition() {
-
-	pos_x = pos_x + vel_x * m_dt;
-	pos_y = pos_y + vel_y * m_dt;
+	
 
 }
 
@@ -151,7 +151,7 @@ HsFilter::~HsFilter() {
 }
 
 void HsFilter::initialize(int ax, int ay, int az) {
-	cf_kp = 0.07;
+	cf_kp = 0.1;
 	cf_ki = 0.0;
 	cf_err_x = 0; cf_err_sum_x = 0; cf_err_y = 0; cf_err_sum_y = 0;
 	cf_kp_val_x = 0; cf_ki_val_x = 0; cf_kd_val_x = 0; cf_kp_val_y = 0; cf_ki_val_y = 0; cf_kd_val_y = 0;
@@ -192,8 +192,8 @@ void HsFilter::initialize(int ax, int ay, int az) {
 	m_roll = atan( m_ay / sqrt(m_ax*m_ax+m_az*m_az) ) * 57.3;
 	m_pitch = -atan( m_ax / sqrt(m_ay*m_ay+m_az*m_az) ) * 57.3;
 
-	vel_x = 0; vel_y = 0; vel_z = 0;
-	pos_x = 0; pos_y = 0;
+	vel_xa = 0; vel_ya = 0; vel_za = 0;
+	//pos_x = 0; pos_y = 0;
 }
 
 void HsFilter::destroy() {

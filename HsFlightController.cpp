@@ -45,12 +45,12 @@ void HsFlightController::AngularControl(double dt) {
 	}
 
 	// D control
-	//roll_d = gx_mean * d_gain / dt;	
-	//pitch_d = -gy_mean * d_gain / dt;
+	roll_d = gx_mean * d_gain / dt;	
+	pitch_d = -gy_mean * d_gain / dt;
 	yaw_d = gz_lpf * d_gain_yaw / dt;
 
-	roll_pid = roll_p + roll_i + 0;
-	pitch_pid = pitch_p  + pitch_i + 0;
+	roll_pid = roll_p + roll_i - roll_d;
+	pitch_pid = pitch_p  + pitch_i - pitch_d;
 	yaw_pid = yaw_p + yaw_i + yaw_d;
 
 	//tmp_pid = roll_p + roll_i + roll_d;
@@ -142,8 +142,8 @@ HsFlightController::~HsFlightController() {
 void HsFlightController::initialize() {
 
 	p_gain = 1.0;//2.0;//2.2;
-	i_gain = 0;//0.3;
-	d_gain = 0.00;
+	i_gain = 0.3;
+	d_gain = 0;//0.015;
 
 	p_gain_ar_roll = 0.10;//0.15;//0.17;//0.16;
 	p_gain_ar_pitch = 0.10;//0.15;//0.17;//0.16;
