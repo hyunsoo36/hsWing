@@ -89,7 +89,9 @@ void HsFilter::estimateVelbyAccel() {
 
 void HsFilter::estimateVelbyGyro() {
 
-	
+	// 방향과 크기 고려하지 않았음 // 방향은 차후에 가속도센서와 비교 후 맞추기
+	vel_xg = vel_xg - (m_pitch/weight_body * m_dt);
+	vel_yg = vel_yg + (m_roll/weight_body * m_dt);
 
 }
 

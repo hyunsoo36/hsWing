@@ -37,6 +37,8 @@ public:
 	double isFirst;
 	double zeroG_ax, zeroG_ay, zeroG_az;
 	double vel_xa, vel_ya, vel_za;
+	double vel_xg, vel_yg;
+	double weight_body;
 	//double pos_x, pos_y;
 	//int m_gx1;
 	//double integral_gx_trapez;
