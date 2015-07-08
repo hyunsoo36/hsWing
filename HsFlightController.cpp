@@ -70,18 +70,34 @@ void HsFlightController::calcForce() {
 	//f_left = alt_pid + (roll_pid) - (yaw_pid);
 	//f_right = alt_pid - (roll_pid) - (yaw_pid);
 
-	f_front = alt_pid - (pitch_ar_p) + (yaw_pid);
-	f_back = alt_pid + (pitch_ar_p) + (yaw_pid);
-	f_left = alt_pid - (roll_ar_p) - (yaw_pid);
-	f_right = alt_pid + (roll_ar_p) - (yaw_pid);
+	//f_front = alt_pid - (pitch_ar_p) + (yaw_pid);
+	//f_back = alt_pid + (pitch_ar_p) + (yaw_pid);
+	//f_left = alt_pid + (roll_ar_p) - (yaw_pid);
+	//f_right = alt_pid - (roll_ar_p) - (yaw_pid);
+	
 
 }
 void HsFlightController::generatePWM(int* pwm1, int* pwm2, int* pwm3, int* pwm4) {
 	
-	*pwm1 = round((m_pwm) + f_front * ctl_gain);
-	*pwm2 = round((m_pwm) + f_left * ctl_gain);
-	*pwm3 = round((m_pwm) + f_back * ctl_gain);
-	*pwm4 = round((m_pwm) + f_right * ctl_gain);
+	// xÄßÅÍ ¹æ½Ä
+	*pwm1 = round((m_pwm) + pitch_ar_p + roll_ar_p + yaw_pid);
+	*pwm2 = round((m_pwm) - pitch_ar_p + roll_ar_p - yaw_pid);
+	*pwm3 = round((m_pwm) - pitch_ar_p - roll_ar_p + yaw_pid);
+	*pwm4 = round((m_pwm) + pitch_ar_p - roll_ar_p - yaw_pid);
+
+
+	//*pwm1 = round((m_pwm) + ((f_back+f_left)/2.0) * ctl_gain);
+	//*pwm2 = round((m_pwm) + ((f_front+f_left)/2.0) * ctl_gain);
+	//*pwm3 = round((m_pwm) + ((f_front+f_right)/2.0) * ctl_gain);
+	//*pwm4 = round((m_pwm) + ((f_back+f_right)/2.0) * ctl_gain);
+
+
+
+	// +ÄßÅÍ ¹æ½Ä
+	//*pwm1 = round((m_pwm) + f_front * ctl_gain);
+	//*pwm2 = round((m_pwm) + f_right * ctl_gain);
+	//*pwm3 = round((m_pwm) + f_back * ctl_gain);
+	//*pwm4 = round((m_pwm) + f_left * ctl_gain);
 
 	*pwm1 = *pwm1 < 0 ? 0 : (*pwm1 > 254 ? 254 : *pwm1);
 	*pwm2 = *pwm2 < 0 ? 0 : (*pwm2 > 254 ? 254 : *pwm2);
@@ -141,12 +157,12 @@ HsFlightController::~HsFlightController() {
 
 void HsFlightController::initialize() {
 
-	p_gain = 1.0;//2.0;//2.2;
+	p_gain = 0.5;//2.0;//2.2;
 	i_gain = 0.3;
 	d_gain = 0;//0.015;
 
-	p_gain_ar_roll = 0.10;//0.15;//0.17;//0.16;
-	p_gain_ar_pitch = 0.10;//0.15;//0.17;//0.16;
+	p_gain_ar_roll = 0.15;//0.15;//0.17;//0.16;
+	p_gain_ar_pitch = 0.15;//0.15;//0.17;//0.16;
 
 	p_gain_yaw = 0.38;
 	i_gain_yaw = 0;//0.10;

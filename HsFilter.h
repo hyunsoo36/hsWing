@@ -43,6 +43,9 @@ public:
 	//int m_gx1;
 	//double integral_gx_trapez;
 
+	double abs_vector;
+	double scale_factor;
+
 
 public:
 	HsFilter();
@@ -59,6 +62,7 @@ public:
 	double generalMeanFilter(double* q, double len, double data);
 	void GyroToEuler();
 	double alt_filter(int ultra, int length);
+	void accelerometerHSR();
 
 	void estimateVelbyAccel();
 	void estimateVelbyGyro();

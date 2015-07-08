@@ -17,15 +17,16 @@ int HsCommunicator::serialFromPi(double *roll, double *pitch, double *yaw, doubl
 		if( buffer[0]==HS_PACKET_HEADER1 && buffer[1]==HS_PACKET_HEADER2 && buffer[HS_BUFFER_LENGTH-1]==HS_PACKET_TAIL) {
 			//Serial.println("get it!");
 			safe_cnt = 0;
-			//*roll =	(((short)buffer[3] << 8) | ((short)buffer[4] << 0)) / 10.0;
-			//*pitch = (((short)buffer[5] << 8) | ((short)buffer[6] << 0)) / 10.0;
-			//*yaw =	(((short)buffer[7] << 8) | ((short)buffer[8] << 0)) / 10.0;
-			//*alt =	(((short)buffer[9] << 8) | ((short)buffer[10] << 0)) / 10.0;
+			*roll =	(((short)buffer[3] << 8) | ((short)buffer[4] << 0)) / 10.0;
+			*pitch = (((short)buffer[5] << 8) | ((short)buffer[6] << 0)) / 10.0;
+			*yaw =	(((short)buffer[7] << 8) | ((short)buffer[8] << 0)) / 10.0;
+			*alt =	(((short)buffer[9] << 8) | ((short)buffer[10] << 0)) / 10.0;
 
-			*roll =	(((signed char)buffer[4] << 0)/2.0 ) ;
-			*pitch = (((signed char)buffer[6] << 0)/2.0 ) ;
-			*yaw =	(((signed char)buffer[8] << 0)/2.0 ) ;
-			*alt =	(((signed char)buffer[10] << 0)/2.0 ) ;
+			//for(int i=0; i<HS_BUFFER_LENGTH; i++) {
+			//	Serial.print((unsigned char)buffer[i]);
+			//	Serial.print("  ");
+			//}
+			//Serial.println();
 
 			flag = 1;
 			
@@ -40,11 +41,7 @@ int HsCommunicator::serialFromPi(double *roll, double *pitch, double *yaw, doubl
 		//Serial.print(serial_len);
 		//Serial.println(" : buffer is flushed.");
 	}
-	for(int i=0; i<HS_BUFFER_LENGTH; i++) {
-			Serial.print((unsigned char)buffer[i]);
-			Serial.print("  ");
-		}
-		Serial.println();
+
 	return flag;
 }
 int HsCommunicator::serialToPi(double roll, double pitch, double yaw, double alt, double ax, double ay, double az) {

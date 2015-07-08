@@ -11,9 +11,9 @@ void HsFilter::setRawData(int ax, int ay, int az, int gx, int gy, int gz) {
 	//m_az = (double)az / 16384.0;
 
 	// digital -> [g]	// BMA150
-	m_ax = (double)ax / 256.0;
-	m_ay = (double)ay / 256.0;
-	m_az = (double)az / 256.0;
+	m_ax = ((double)-ax / 256.0) * scale_factor;
+	m_ay = ((double)-ay / 256.0) * scale_factor;
+	m_az = ((double)az / 256.0) * scale_factor;
 
 
 	// digital -> [deg/s]
@@ -43,7 +43,7 @@ void HsFilter::complementaryFilter() {
 
 	pitch_acc = -atan( m_ax / sqrt(m_ay*m_ay+m_az*m_az) ) * 57.3;	// 57.3 = 180.0 / 3.141592
 	pitch_gyro_dot = m_gy*cos(m_roll_rad) - m_gz*sin(m_roll_rad);
-	//pitch_gyro += pitch_gyro_dot * m_dt;
+	pitch_gyro += pitch_gyro_dot * m_dt;
 	//integral_gy += m_gy * m_dt;
 	cf_err_y = m_pitch - pitch_acc;
 	cf_err_sum_y += cf_err_y * m_dt;
@@ -92,6 +92,24 @@ void HsFilter::estimateVelbyGyro() {
 	// 방향과 크기 고려하지 않았음 // 방향은 차후에 가속도센서와 비교 후 맞추기
 	vel_xg = vel_xg - (m_pitch/weight_body * m_dt);
 	vel_yg = vel_yg + (m_roll/weight_body * m_dt);
+
+}
+void HsFilter::accelerometerHSR() {
+
+	
+
+	abs_vector = sqrt(m_ax*m_ax + m_ay*m_ay + m_az*m_az);
+
+	if( abs_vector > 1 ) {
+		scale_factor = scale_factor / 1.0001;
+	}else if( abs_vector < 1 ) {
+		scale_factor = scale_factor * 1.0001;
+	}
+
+	//m_ax *= scale_factor;
+	//m_ay *= scale_factor;
+	//m_az *= scale_factor;
+
 
 }
 
@@ -188,14 +206,17 @@ void HsFilter::initialize(int ax, int ay, int az) {
 
 ////// cf value init.
 	// digital -> [g]	// BMA150
-	m_ax = (double)ax / 256.0;
-	m_ay = (double)ay / 256.0;
+	m_ax = (double)-ax / 256.0;
+	m_ay = (double)-ay / 256.0;
 	m_az = (double)az / 256.0;
 	m_roll = atan( m_ay / sqrt(m_ax*m_ax+m_az*m_az) ) * 57.3;
 	m_pitch = -atan( m_ax / sqrt(m_ay*m_ay+m_az*m_az) ) * 57.3;
 
 	vel_xa = 0; vel_ya = 0; vel_za = 0;
 	//pos_x = 0; pos_y = 0;
+
+	abs_vector = 0;
+	scale_factor = 1;
 }
 
 void HsFilter::destroy() {
