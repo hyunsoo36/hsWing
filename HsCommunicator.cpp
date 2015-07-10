@@ -10,36 +10,36 @@ int HsCommunicator::serialFromPi(double *roll, double *pitch, double *yaw, doubl
 	safe_cnt++;
 
 	if( serial_len > 0 && serial_len <= HS_BUFFER_LENGTH) {
-		Serial1.readBytes(serial_buf, serial_len);
+		Serial1.readBytes(serial_buf, serial_len);		// 읽어들이기
 		memcpy( &buffer[0], &buffer[serial_len], HS_BUFFER_LENGTH-serial_len );
 		memcpy( &buffer[HS_BUFFER_LENGTH-serial_len], &serial_buf[0], serial_len );
 		
 		if( buffer[0]==HS_PACKET_HEADER1 && buffer[1]==HS_PACKET_HEADER2 && buffer[HS_BUFFER_LENGTH-1]==HS_PACKET_TAIL) {
 			//Serial.println("get it!");
 			safe_cnt = 0;
-			*roll =	(((short)buffer[3] << 8) | ((short)buffer[4] << 0)) / 10.0;
-			*pitch = (((short)buffer[5] << 8) | ((short)buffer[6] << 0)) / 10.0;
-			*yaw =	(((short)buffer[7] << 8) | ((short)buffer[8] << 0)) / 10.0;
-			*alt =	(((short)buffer[9] << 8) | ((short)buffer[10] << 0)) / 10.0;
+			*roll =	(double)(((short)buffer[3] << 8) | ((short)buffer[4] << 0));
+			*pitch = (double)(((short)buffer[5] << 8) | ((short)buffer[6] << 0));
+			*yaw =	(double)(((short)buffer[7] << 8) | ((short)buffer[8] << 0));
+			*alt =	(double)(((short)buffer[9] << 8) | ((short)buffer[10] << 0));
 
-			//for(int i=0; i<HS_BUFFER_LENGTH; i++) {
-			//	Serial.print((unsigned char)buffer[i]);
-			//	Serial.print("  ");
-			//}
-			//Serial.println();
+			
 
 			flag = 1;
 			
 		}
 
-		
+		//for(int i=0; i<HS_BUFFER_LENGTH; i++) {
+		//	Serial.print((unsigned char)serial_buf[i]);
+		//	Serial.print("  ");
+		//}
+		//Serial.println();
 		
 
 	}else if( serial_len > HS_BUFFER_LENGTH ) {
 		char tmpBuf[1024];
 		Serial1.readBytes(tmpBuf, serial_len);
-		//Serial.print(serial_len);
-		//Serial.println(" : buffer is flushed.");
+		Serial.print(serial_len);
+		Serial.println(" : buffer is flushed.");
 	}
 
 	return flag;

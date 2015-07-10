@@ -17,11 +17,15 @@ public:
 	double m_roll, m_pitch, m_yaw;
 
 	double p_gain, i_gain, d_gain;
-	double p_gain_ar_roll, p_gain_ar_pitch;
+	double p_gain_rate, d_gain_rate;
 	double roll_p, roll_i, roll_d, roll_pid;
 	double pitch_p, pitch_i, pitch_d, pitch_pid;
 	double yaw_p, yaw_i, yaw_d, yaw_pid;
-	double roll_ar_p, pitch_ar_p;
+	double roll_rate_err, pitch_rate_err;
+	double roll_rate_err_last, pitch_rate_err_last;
+	double roll_rate_p, roll_rate_d, roll_rate_pid;
+	double pitch_rate_p, pitch_rate_d, pitch_rate_pid;
+
 	double m_dt;
 	double m_pwm;
 

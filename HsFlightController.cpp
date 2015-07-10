@@ -56,10 +56,23 @@ void HsFlightController::AngularControl(double dt) {
 	//tmp_pid = roll_p + roll_i + roll_d;
 }
 void HsFlightController::AngularRateControl() {
+	
+	roll_rate_err = roll_pid - gx_mean;
+	pitch_rate_err = pitch_pid - gy_mean;
 
-	// 각속도 제어		// 부호 주의할 것!
-	roll_ar_p = (roll_pid - gx_mean) * p_gain_ar_roll;
-	pitch_ar_p = (pitch_pid - gy_mean) * p_gain_ar_pitch;
+	// 각속도 P 제어		// 부호 주의할 것!
+	roll_rate_p = roll_rate_err * p_gain_rate;
+	pitch_rate_p = pitch_rate_err * p_gain_rate;
+
+	// 각속도 D제어
+	roll_rate_d = (roll_rate_err - roll_rate_err_last) * d_gain_rate / m_dt;
+	pitch_rate_d = (pitch_rate_err - pitch_rate_err_last) * d_gain_rate / m_dt;
+
+	roll_rate_err_last = roll_rate_err;
+	pitch_rate_err_last = pitch_rate_err;
+
+	roll_rate_pid = roll_rate_p + roll_rate_d;
+	pitch_rate_pid = pitch_rate_p + pitch_rate_d;
 
 }
 
@@ -70,20 +83,20 @@ void HsFlightController::calcForce() {
 	//f_left = alt_pid + (roll_pid) - (yaw_pid);
 	//f_right = alt_pid - (roll_pid) - (yaw_pid);
 
-	//f_front = alt_pid - (pitch_ar_p) + (yaw_pid);
-	//f_back = alt_pid + (pitch_ar_p) + (yaw_pid);
-	//f_left = alt_pid + (roll_ar_p) - (yaw_pid);
-	//f_right = alt_pid - (roll_ar_p) - (yaw_pid);
+	//f_front = alt_pid - (pitch_rate_p) + (yaw_pid);
+	//f_back = alt_pid + (pitch_rate_p) + (yaw_pid);
+	//f_left = alt_pid + (roll_rate_p) - (yaw_pid);
+	//f_right = alt_pid - (roll_rate_p) - (yaw_pid);
 	
 
 }
 void HsFlightController::generatePWM(int* pwm1, int* pwm2, int* pwm3, int* pwm4) {
 	
 	// x콥터 방식
-	*pwm1 = round((m_pwm) + pitch_ar_p + roll_ar_p + yaw_pid);
-	*pwm2 = round((m_pwm) - pitch_ar_p + roll_ar_p - yaw_pid);
-	*pwm3 = round((m_pwm) - pitch_ar_p - roll_ar_p + yaw_pid);
-	*pwm4 = round((m_pwm) + pitch_ar_p - roll_ar_p - yaw_pid);
+	*pwm1 = round((m_pwm) + alt_pid + pitch_rate_pid + roll_rate_pid + yaw_pid);
+	*pwm2 = round((m_pwm) + alt_pid - pitch_rate_pid + roll_rate_pid - yaw_pid);
+	*pwm3 = round((m_pwm) + alt_pid - pitch_rate_pid - roll_rate_pid + yaw_pid);
+	*pwm4 = round((m_pwm) + alt_pid + pitch_rate_pid - roll_rate_pid - yaw_pid);
 
 
 	//*pwm1 = round((m_pwm) + ((f_back+f_left)/2.0) * ctl_gain);
@@ -157,43 +170,47 @@ HsFlightController::~HsFlightController() {
 
 void HsFlightController::initialize() {
 
-	p_gain = 0.5;//2.0;//2.2;
-	i_gain = 0.3;
+#if 1
+	p_gain = 4.0;//2.0;//2.2;
+	i_gain = 0;//0.3;
 	d_gain = 0;//0.015;
 
-	p_gain_ar_roll = 0.15;//0.15;//0.17;//0.16;
-	p_gain_ar_pitch = 0.15;//0.15;//0.17;//0.16;
+	p_gain_rate = 0.05;//0.15;//0.17;//0.16;
+	d_gain_rate = 0.01;
 
-	p_gain_yaw = 0.38;
+	p_gain_yaw = 0.15;//0.38;
 	i_gain_yaw = 0;//0.10;
-	d_gain_yaw = 0.0015;
+	d_gain_yaw = 0.0017;
 
 	
 	p_gain_alt = 0.21;
 	i_gain_alt = 0;//0.08;
 	d_gain_alt = 0.16;
 	
+#else
 
+	p_gain = 0;
+	i_gain = 0;
+	d_gain = 0;
 
-	//p_gain_alt = 0.3;
-	//i_gain_alt = 0.00;
-	//d_gain_alt = 0.3;//2.2;
-
-
+	p_gain_rate = 0;
+	d_gain_rate = 0;
 	
-	//p_gain_yaw = 0;
-	//i_gain_yaw = 0;
-	//d_gain_yaw = 0;
+	p_gain_yaw = 0;
+	i_gain_yaw = 0;
+	d_gain_yaw = 0;
 
-	//p_gain_alt = 0;
-	//i_gain_alt = 0;
-	//d_gain_alt = 0;	
+	p_gain_alt = 0;
+	i_gain_alt = 0;
+	d_gain_alt = 0;	
+
+#endif
 
 	roll_p=0, roll_i=0, roll_d=0;
 	pitch_p=0, pitch_i=0, pitch_d=0;
 	yaw_p=0, yaw_i=0, yaw_d=0;
 
-	roll_ar_p = 0, pitch_ar_p = 0;
+	roll_rate_p = 0, pitch_rate_p = 0;
 
 	roll_setPoint = 0.0;
 	pitch_setPoint = 0.0;
@@ -220,6 +237,8 @@ void HsFlightController::initialize() {
 
 	tmp_pid = 0;
 
+	roll_rate_p = 0;	roll_rate_d = 0;	roll_rate_pid = 0; 
+	pitch_rate_p = 0;	pitch_rate_d = 0;	pitch_rate_pid = 0; 
 
 }
 

@@ -27,7 +27,7 @@
 #define HS_PACKET_TAIL 0xFF
 
 #ifndef WIRELESS_DEBUGGING
-#define HS_SERIAL_DELAY 0.05
+#define HS_SERIAL_DELAY 0.03
 #else
 #define HS_SERIAL_DELAY 0.02
 #endif
