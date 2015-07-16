@@ -53,16 +53,36 @@ void HsFlightController::AngularControl(double dt) {
 	pitch_pid = pitch_p  + pitch_i - pitch_d;
 	yaw_pid = yaw_p + yaw_i + yaw_d;
 
+	
+
 	//tmp_pid = roll_p + roll_i + roll_d;
 }
 void HsFlightController::AngularRateControl() {
 	
-	roll_rate_err = roll_pid - gx_mean;
-	pitch_rate_err = pitch_pid - gy_mean;
+	// queue shift
+	memcpy( &roll_pid_q[0], &roll_pid_q[1], sizeof(double)*(TIMED_MULTIPLEX_CONTROL_DELAY_COUNT-1));
+	memcpy( &pitch_pid_q[0], &pitch_pid_q[1], sizeof(double)*(TIMED_MULTIPLEX_CONTROL_DELAY_COUNT-1));
+	roll_pid_q[TIMED_MULTIPLEX_CONTROL_DELAY_COUNT-1] = roll_pid;
+	pitch_pid_q[TIMED_MULTIPLEX_CONTROL_DELAY_COUNT-1] = pitch_pid;
+	roll_pid_q_avg = 0;	pitch_pid_q_avg = 0;
+	for(int i=0; i<TIMED_MULTIPLEX_CONTROL_DELAY_COUNT; i++) {
+		roll_pid_q_avg += roll_pid_q[i];
+		pitch_pid_q_avg += pitch_pid_q[i];
+	}
+	roll_pid_q_avg /= (double)TIMED_MULTIPLEX_CONTROL_DELAY_COUNT;
+	pitch_pid_q_avg /= (double)TIMED_MULTIPLEX_CONTROL_DELAY_COUNT;
+
+	//
+	//roll_rate_err = roll_pid - gx_mean;
+	//pitch_rate_err = pitch_pid - gy_mean;
 
 	// 각속도 P 제어		// 부호 주의할 것!
-	roll_rate_p = roll_rate_err * p_gain_rate;
-	pitch_rate_p = pitch_rate_err * p_gain_rate;
+	roll_rate_p = (roll_pid - gx_mean) * p_gain_rate;
+	pitch_rate_p = (pitch_pid - gy_mean) * p_gain_rate;
+
+	roll_rate_err = roll_pid_q_avg - gx_mean;
+	pitch_rate_err = pitch_pid_q_avg - gy_mean;
+	
 
 	// 각속도 D제어
 	roll_rate_d = (roll_rate_err - roll_rate_err_last) * d_gain_rate / m_dt;
@@ -147,6 +167,7 @@ void HsFlightController::altitudeControl(double setpoint, double alt_lpf) {
 
 
 	alt_pid = alt_p + alt_i + alt_d_lpf;
+
 	
 }
 void HsFlightController::altitudeControl_onlyD() {
@@ -176,7 +197,7 @@ void HsFlightController::initialize() {
 	d_gain = 0;//0.015;
 
 	p_gain_rate = 0.05;//0.15;//0.17;//0.16;
-	d_gain_rate = 0.01;
+	d_gain_rate = 0.005;
 
 	p_gain_yaw = 0.15;//0.38;
 	i_gain_yaw = 0;//0.10;

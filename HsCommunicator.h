@@ -19,17 +19,17 @@
 #define HS_BLUETOOTH_DT 0.1
 #endif
 
-#define HS_BUFFER_LENGTH  12
+#define HS_BUFFER_LENGTH  8
 
 #define HS_PACKET_LENGTH 18
 #define HS_PACKET_HEADER1 0xEF
 #define HS_PACKET_HEADER2 0xFE
 #define HS_PACKET_TAIL 0xFF
 
-#ifndef WIRELESS_DEBUGGING
-#define HS_SERIAL_DELAY 0.03
+#ifdef WIRELESS_DEBUGGING
+#define HS_SERIAL_DELAY 0.020
 #else
-#define HS_SERIAL_DELAY 0.02
+#define HS_SERIAL_DELAY 0.020
 #endif
 
 
@@ -60,7 +60,7 @@ public:
 
 
 	
-	int serialFromPi(double *roll, double *pitch, double *yaw, double *alt);
+	int serialFromPi(int *state, double *roll, double *pitch, double *yaw, double *alt);
 
 	int serialToPi(double roll, double pitch, double yaw, double alt, double ax, double ay, double az);
 	int makePacket(uint8_t* data, int len);

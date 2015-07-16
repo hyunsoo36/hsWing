@@ -71,7 +71,7 @@ extern "C" void __cxa_pure_virtual() {;}
 #include <I2Cdev.h>
 #include <MPU6050.cpp>
 #include <MPU6050.h>
-#include <Overmind.h>
+#include <WingConfig.h>
 #include <srf08.cpp>
 #include <srf08.h>
 #endif

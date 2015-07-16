@@ -2,7 +2,7 @@
 
 
 
-int HsCommunicator::serialFromPi(double *roll, double *pitch, double *yaw, double *alt) {
+int HsCommunicator::serialFromPi(int *state, double *roll_sp, double *pitch_sp, double *yaw_sp, double *alt_sp) {
 	int serial_len = Serial1.available();
 	char serial_buf[HS_BUFFER_LENGTH];
 	int flag = 0;
@@ -17,11 +17,12 @@ int HsCommunicator::serialFromPi(double *roll, double *pitch, double *yaw, doubl
 		if( buffer[0]==HS_PACKET_HEADER1 && buffer[1]==HS_PACKET_HEADER2 && buffer[HS_BUFFER_LENGTH-1]==HS_PACKET_TAIL) {
 			//Serial.println("get it!");
 			safe_cnt = 0;
-			*roll =	(double)(((short)buffer[3] << 8) | ((short)buffer[4] << 0));
-			*pitch = (double)(((short)buffer[5] << 8) | ((short)buffer[6] << 0));
-			*yaw =	(double)(((short)buffer[7] << 8) | ((short)buffer[8] << 0));
-			*alt =	(double)(((short)buffer[9] << 8) | ((short)buffer[10] << 0));
-
+			*state = (int)((signed char)buffer[2]);
+			*roll_sp =	(double)((signed char)buffer[3] / 2.0);
+			*pitch_sp = (double)((signed char)buffer[4] / 2.0);
+			*yaw_sp =	(double)((signed char)buffer[5] / 2.0);
+			*alt_sp =	(double)(signed char)(buffer[6]);
+			//*roll =	(double)(((short)buffer[3] << 8) | ((short)buffer[4] << 0));
 			
 
 			flag = 1;
@@ -64,7 +65,12 @@ int HsCommunicator::serialToPi(double roll, double pitch, double yaw, double alt
 	makePacket(data, HS_PACKET_LENGTH-4);
 
 	Serial1.write(packet, HS_PACKET_LENGTH);
-
+	
+	for(int i=0; i<8; i++) {
+		Serial.print((unsigned char)packet[i]);
+		Serial.print("  ");
+	}
+	Serial.println();
 
 
 }

@@ -9,6 +9,8 @@
 
 
 #include "srf08.h"
+#include "WingConfig.h"
+
 #define round(x) ((x)>=0?(long)((x)+0.5):(long)((x)-0.5))
 
 class HsFlightController {
@@ -25,7 +27,8 @@ public:
 	double roll_rate_err_last, pitch_rate_err_last;
 	double roll_rate_p, roll_rate_d, roll_rate_pid;
 	double pitch_rate_p, pitch_rate_d, pitch_rate_pid;
-
+	double roll_pid_q[TIMED_MULTIPLEX_CONTROL_DELAY_COUNT], pitch_pid_q[TIMED_MULTIPLEX_CONTROL_DELAY_COUNT];
+	double roll_pid_q_avg, pitch_pid_q_avg;
 	double m_dt;
 	double m_pwm;
 

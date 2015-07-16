@@ -78,7 +78,7 @@
     <ClInclude Include="HsFlightController.h" />
     <ClInclude Include="I2Cdev.h" />
     <ClInclude Include="MPU6050.h" />
-    <ClInclude Include="Overmind.h" />
+    <ClInclude Include="WingConfig.h" />
     <ClInclude Include="srf08.h" />
     <ClInclude Include="Visual Micro\.HsWing.vsarduino.h" />
   </ItemGroup>

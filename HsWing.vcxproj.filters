@@ -43,7 +43,7 @@
     <ClInclude Include="srf08.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Overmind.h">
+    <ClInclude Include="WingConfig.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
