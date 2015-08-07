@@ -192,12 +192,12 @@ HsFlightController::~HsFlightController() {
 void HsFlightController::initialize() {
 
 #if 1
-	p_gain = 4.0;//2.0;//2.2;
+	p_gain = 5.0;//2.0;//2.2;
 	i_gain = 0;//0.3;
 	d_gain = 0;//0.015;
 
 	p_gain_rate = 0.05;//0.15;//0.17;//0.16;
-	d_gain_rate = 0.005;
+	d_gain_rate = 0.006;
 
 	p_gain_yaw = 0.15;//0.38;
 	i_gain_yaw = 0;//0.10;
@@ -206,7 +206,7 @@ void HsFlightController::initialize() {
 	
 	p_gain_alt = 0.21;
 	i_gain_alt = 0;//0.08;
-	d_gain_alt = 0.16;
+	d_gain_alt = 0.17;
 	
 #else
 

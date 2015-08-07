@@ -79,5 +79,6 @@ public:
 	void setRoll(double roll) { m_roll = roll; }
 	void setpitch(double pitch) { m_pitch = pitch; }
 	void setyaw(double yaw) { m_yaw = yaw; }
+	void Offset(double r, double p);
 
 };

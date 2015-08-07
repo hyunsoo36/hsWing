@@ -15,7 +15,7 @@ int HsCommunicator::serialFromPi(int *state, double *roll_sp, double *pitch_sp, 
 		memcpy( &buffer[HS_BUFFER_LENGTH-serial_len], &serial_buf[0], serial_len );
 		
 		if( buffer[0]==HS_PACKET_HEADER1 && buffer[1]==HS_PACKET_HEADER2 && buffer[HS_BUFFER_LENGTH-1]==HS_PACKET_TAIL) {
-			//Serial.println("get it!");
+			//Serial.println(*state);
 			safe_cnt = 0;
 			*state = (int)((signed char)buffer[2]);
 			*roll_sp =	(double)((signed char)buffer[3] / 2.0);
@@ -39,8 +39,8 @@ int HsCommunicator::serialFromPi(int *state, double *roll_sp, double *pitch_sp, 
 	}else if( serial_len > HS_BUFFER_LENGTH ) {
 		char tmpBuf[1024];
 		Serial1.readBytes(tmpBuf, serial_len);
-		Serial.print(serial_len);
-		Serial.println(" : buffer is flushed.");
+		//Serial.print(serial_len);
+		//Serial.println(" : buffer is flushed.");
 	}
 
 	return flag;
@@ -66,11 +66,11 @@ int HsCommunicator::serialToPi(double roll, double pitch, double yaw, double alt
 
 	Serial1.write(packet, HS_PACKET_LENGTH);
 	
-	for(int i=0; i<8; i++) {
-		Serial.print((unsigned char)packet[i]);
-		Serial.print("  ");
-	}
-	Serial.println();
+	//for(int i=0; i<8; i++) {
+	//	Serial.print((unsigned char)packet[i]);
+	//	Serial.print("  ");
+	//}
+	//Serial.println();
 
 
 }
