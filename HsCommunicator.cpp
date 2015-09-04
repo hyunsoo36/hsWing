@@ -45,7 +45,8 @@ int HsCommunicator::serialFromPi(int *state, double *roll_sp, double *pitch_sp, 
 
 	return flag;
 }
-int HsCommunicator::serialToPi(double roll, double pitch, double yaw, double alt, double ax, double ay, double az) {
+int HsCommunicator::serialToPi(double roll, double pitch, double yaw, double alt
+							   , double ax, double ay, double az, double gx, double gy, double gz) {
 	
 	data[0] = (uint8_t)(( ((short)(roll*10.0)) & 0xFF00 ) >> 8);
 	data[1] = (uint8_t)(( ((short)(roll*10.0)) & 0x00FF ) >> 0);
@@ -61,6 +62,12 @@ int HsCommunicator::serialToPi(double roll, double pitch, double yaw, double alt
 	data[11] = (uint8_t)(( ((short)(ay*100.0)) & 0x00FF ) >> 0);
 	data[12] = (uint8_t)(( ((short)(az*100.0)) & 0xFF00 ) >> 8);
 	data[13] = (uint8_t)(( ((short)(az*100.0)) & 0x00FF ) >> 0);
+	data[14] = (uint8_t)(( ((short)(gx*100.0)) & 0xFF00 ) >> 8);
+	data[15] = (uint8_t)(( ((short)(gx*100.0)) & 0x00FF ) >> 0);
+	data[16] = (uint8_t)(( ((short)(gy*100.0)) & 0xFF00 ) >> 8);
+	data[17] = (uint8_t)(( ((short)(gy*100.0)) & 0x00FF ) >> 0);
+	data[18] = (uint8_t)(( ((short)(gz*100.0)) & 0xFF00 ) >> 8);
+	data[19] = (uint8_t)(( ((short)(gz*100.0)) & 0x00FF ) >> 0);
 	
 	makePacket(data, HS_PACKET_LENGTH-4);
 

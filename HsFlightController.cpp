@@ -199,9 +199,9 @@ void HsFlightController::initialize() {
 	p_gain_rate = 0.05;//0.15;//0.17;//0.16;
 	d_gain_rate = 0.006;
 
-	p_gain_yaw = 0.15;//0.38;
+	p_gain_yaw = 0.18;//0.38;
 	i_gain_yaw = 0;//0.10;
-	d_gain_yaw = 0.0017;
+	d_gain_yaw = 0.0018;
 
 	
 	p_gain_alt = 0.21;
