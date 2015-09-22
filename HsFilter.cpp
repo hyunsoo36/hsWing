@@ -113,26 +113,7 @@ void HsFilter::accelerometerHSR() {
 
 }
 
-double HsFilter::alt_filter(int ultra, int length) {
-	alt_avg = 0;
-	alt_sum = 0;
 
-	for(int i=length+1; i>0; i--) {		// 원래는 length-1이지만 넉넉하게 +2 하자
-		alt[i] = alt[i-1];
-		if( i < length ) {
-			alt_sum += alt[i];
-		}
-	}
-	
-	alt[0] = ultra;
-	alt_sum += alt[0];
-
-	alt_avg = (double)alt_sum / (double)(length);
-
-	
-	return alt_avg;
-
-}
 
 double HsFilter::generalLowPassFilter(double* lpf, double data, double a, double b) {
 

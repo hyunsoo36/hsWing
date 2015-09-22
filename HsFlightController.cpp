@@ -96,20 +96,7 @@ void HsFlightController::AngularRateControl() {
 
 }
 
-void HsFlightController::calcForce() {
 
-	//f_front = alt_pid - (pitch_pid) + (yaw_pid);
-	//f_back = alt_pid + (pitch_pid) + (yaw_pid);
-	//f_left = alt_pid + (roll_pid) - (yaw_pid);
-	//f_right = alt_pid - (roll_pid) - (yaw_pid);
-
-	//f_front = alt_pid - (pitch_rate_p) + (yaw_pid);
-	//f_back = alt_pid + (pitch_rate_p) + (yaw_pid);
-	//f_left = alt_pid + (roll_rate_p) - (yaw_pid);
-	//f_right = alt_pid - (roll_rate_p) - (yaw_pid);
-	
-
-}
 void HsFlightController::generatePWM(int* pwm1, int* pwm2, int* pwm3, int* pwm4) {
 	
 	// xÄßÅÍ ¹æ½Ä
@@ -119,18 +106,6 @@ void HsFlightController::generatePWM(int* pwm1, int* pwm2, int* pwm3, int* pwm4)
 	*pwm4 = round((m_pwm) + alt_pid + pitch_rate_pid - roll_rate_pid - yaw_pid);
 
 
-	//*pwm1 = round((m_pwm) + ((f_back+f_left)/2.0) * ctl_gain);
-	//*pwm2 = round((m_pwm) + ((f_front+f_left)/2.0) * ctl_gain);
-	//*pwm3 = round((m_pwm) + ((f_front+f_right)/2.0) * ctl_gain);
-	//*pwm4 = round((m_pwm) + ((f_back+f_right)/2.0) * ctl_gain);
-
-
-
-	// +ÄßÅÍ ¹æ½Ä
-	//*pwm1 = round((m_pwm) + f_front * ctl_gain);
-	//*pwm2 = round((m_pwm) + f_right * ctl_gain);
-	//*pwm3 = round((m_pwm) + f_back * ctl_gain);
-	//*pwm4 = round((m_pwm) + f_left * ctl_gain);
 
 	*pwm1 = *pwm1 < 0 ? 0 : (*pwm1 > 254 ? 254 : *pwm1);
 	*pwm2 = *pwm2 < 0 ? 0 : (*pwm2 > 254 ? 254 : *pwm2);

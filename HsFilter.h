@@ -61,7 +61,7 @@ public:
 	double generalLowPassFilter(double* lpf, double data, double a, double b);
 	double generalMeanFilter(double* q, double len, double data);
 	void GyroToEuler();
-	double alt_filter(int ultra, int length);
+	//double alt_filter(int ultra, int length);
 	void accelerometerHSR();
 
 	void estimateVelbyAccel();
