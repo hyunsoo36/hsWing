@@ -15,6 +15,6 @@
 #define ROTOR_ENABLE								// 모터 작동 on/off
 #define MAX_ANGLE		40							// 최대 기체 각도	// 이 각도를 넘으면 착륙시킴
 
-#define FC_RELEASE									// 무선 비행시 필요없는 기능 on/off		// PC연결 및 디버깅할 땐 주석처리해야 함.
+//#define FC_RELEASE									// 무선 비행시 필요없는 기능 on/off		// PC연결 및 디버깅할 땐 주석처리해야 함.
 
 #endif

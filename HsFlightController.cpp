@@ -25,17 +25,17 @@ void HsFlightController::AngularControl(double dt) {
 	yaw_i = yaw_err_integral * i_gain_yaw;
 
 	// integral wind_up 
-	if(roll_err_integral > i_wind_up_limit) { 
-		roll_err_integral = i_wind_up_limit;
+	if(roll_i > i_wind_up_limit) { 
+		roll_i = i_wind_up_limit;
 	}
-	else if(roll_err_integral < 0-i_wind_up_limit) {
-		roll_err_integral = 0-i_wind_up_limit;
+	else if(roll_i < 0-i_wind_up_limit) {
+		roll_i = 0-i_wind_up_limit;
 	}
-	if(pitch_err_integral > i_wind_up_limit) { 
-		pitch_err_integral = i_wind_up_limit;
+	if(pitch_i > i_wind_up_limit) { 
+		pitch_i = i_wind_up_limit;
 	}
-	else if(pitch_err_integral < 0-i_wind_up_limit) {
-		pitch_err_integral = 0-i_wind_up_limit;
+	else if(pitch_i < 0-i_wind_up_limit) {
+		pitch_i = 0-i_wind_up_limit;
 	}
 	if(yaw_err_integral > i_wind_up_limit_yaw) { 
 		yaw_err_integral = i_wind_up_limit_yaw;
@@ -167,12 +167,14 @@ HsFlightController::~HsFlightController() {
 void HsFlightController::initialize() {
 
 #if 1
+
 	p_gain = 5.0;//2.0;//2.2;
-	i_gain = 0;//0.3;
+	i_gain = 7.5;
 	d_gain = 0;//0.015;
 
-	p_gain_rate = 0.05;//0.15;//0.17;//0.16;
+	p_gain_rate = 0.18;//0.15;//0.17;//0.16;
 	d_gain_rate = 0.006;
+	// 0.24, 0.006
 
 	p_gain_yaw = 0.18;//0.38;
 	i_gain_yaw = 0;//0.10;
@@ -182,6 +184,23 @@ void HsFlightController::initialize() {
 	p_gain_alt = 0.21;
 	i_gain_alt = 0;//0.08;
 	d_gain_alt = 0.17;
+
+
+	//p_gain = 5.0;//2.0;//2.2;
+	//i_gain = 0;//0.3;
+	//d_gain = 0;//0.015;
+
+	//p_gain_rate = 0.05;//0.15;//0.17;//0.16;
+	//d_gain_rate = 0.006;
+
+	//p_gain_yaw = 0.18;//0.38;
+	//i_gain_yaw = 0;//0.10;
+	//d_gain_yaw = 0.0018;
+
+	//
+	//p_gain_alt = 0.21;
+	//i_gain_alt = 0;//0.08;
+	//d_gain_alt = 0.17;
 	
 #else
 
@@ -215,7 +234,7 @@ void HsFlightController::initialize() {
 	pitch_err = 0;
 	yaw_err = 0;
 	roll_err_integral = 0; pitch_err_integral = 0; yaw_err_integral = 0;
-	i_wind_up_limit = 5; i_wind_up_limit_yaw = 10;
+	i_wind_up_limit = 20; i_wind_up_limit_yaw = 10;
 	
 	f_right = 0; f_left = 0; f_front = 0; f_back = 0;
 
