@@ -23,10 +23,13 @@ public:
 	double roll_p, roll_i, roll_d, roll_pid;
 	double pitch_p, pitch_i, pitch_d, pitch_pid;
 	double yaw_p, yaw_i, yaw_d, yaw_pid;
-	double roll_rate_err, pitch_rate_err;
+	double m_yaw_rate;
+	double roll_rate_err, pitch_rate_err, yaw_rate_err;
 	double roll_rate_err_last, pitch_rate_err_last;
 	double roll_rate_p, roll_rate_d, roll_rate_pid;
 	double pitch_rate_p, pitch_rate_d, pitch_rate_pid;
+	double yaw_rate_p, yaw_rate_i, yaw_rate_pid;
+	double basePWM, yaw_b;
 	double roll_pid_q[TIMED_MULTIPLEX_CONTROL_DELAY_COUNT], pitch_pid_q[TIMED_MULTIPLEX_CONTROL_DELAY_COUNT];
 	double roll_pid_q_avg, pitch_pid_q_avg;
 	double m_dt;
@@ -81,7 +84,7 @@ public:
 
 	// getter, setter method
 	void setDt(double dt) { m_dt = dt; }	// 필수
-	void setEulerAngle(double roll, double pitch, double yaw);	// 필수
+	void setEulerAngleAndRate(double roll, double pitch, double yaw_rate);	// 필수
 	void setSmoothValue(double xValue, double yValue, double zValue);	// 필수
 	void setPwm(double pwm) { m_pwm = pwm; }	// 필수
 	void setSetPoint(double roll, double pitch);	// 필수

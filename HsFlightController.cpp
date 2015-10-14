@@ -9,20 +9,19 @@ void HsFlightController::attitudeControl() {
 void HsFlightController::AngularControl(double dt) {
 	roll_err = roll_setPoint - m_roll;
 	pitch_err = pitch_setPoint - m_pitch;
-	yaw_err = yaw_setPoint - m_yaw;
+	//yaw_err = yaw_setPoint - m_yaw;
 
 	// P control
 	roll_p = roll_err * p_gain;
 	pitch_p = pitch_err * p_gain;
-	yaw_p = yaw_err * p_gain_yaw;
+	//yaw_p = yaw_err * p_gain_yaw;
 
 	// I control
 	roll_err_integral += roll_err * dt;
 	roll_i = roll_err_integral * i_gain;
 	pitch_err_integral += pitch_err * dt;
 	pitch_i = pitch_err_integral * i_gain;
-	yaw_err_integral += yaw_err * dt;
-	yaw_i = yaw_err_integral * i_gain_yaw;
+	
 
 	// integral wind_up 
 	if(roll_i > i_wind_up_limit) { 
@@ -37,21 +36,16 @@ void HsFlightController::AngularControl(double dt) {
 	else if(pitch_i < 0-i_wind_up_limit) {
 		pitch_i = 0-i_wind_up_limit;
 	}
-	if(yaw_err_integral > i_wind_up_limit_yaw) { 
-		yaw_err_integral = i_wind_up_limit_yaw;
-	}
-	else if(yaw_err_integral < 0-i_wind_up_limit_yaw) {
-		yaw_err_integral = 0-i_wind_up_limit_yaw;
-	}
+	
 
 	// D control
 	roll_d = gx_mean * d_gain / dt;	
 	pitch_d = -gy_mean * d_gain / dt;
-	yaw_d = gz_lpf * d_gain_yaw / dt;
+	//yaw_d = gz_lpf * d_gain_yaw / dt;
 
 	roll_pid = roll_p + roll_i - roll_d;
 	pitch_pid = pitch_p  + pitch_i - pitch_d;
-	yaw_pid = yaw_p + yaw_i + yaw_d;
+	//yaw_pid = yaw_p + yaw_i + yaw_d;
 
 	
 
@@ -82,7 +76,18 @@ void HsFlightController::AngularRateControl() {
 
 	roll_rate_err = roll_pid_q_avg - gx_mean;
 	pitch_rate_err = pitch_pid_q_avg - gy_mean;
-	
+
+	yaw_rate_err = yaw_setPoint - m_yaw_rate;
+	yaw_rate_p = yaw_rate_err * p_gain_yaw;
+
+	// 각속도 I 제어
+	yaw_err_integral += yaw_rate_err * m_dt;
+	yaw_rate_i = yaw_err_integral * i_gain_yaw;
+	if(yaw_rate_i > i_wind_up_limit_yaw) { 
+		yaw_rate_i = i_wind_up_limit_yaw;
+	}else if(yaw_rate_i < 0-i_wind_up_limit_yaw) {
+		yaw_rate_i = 0-i_wind_up_limit_yaw;
+	}
 
 	// 각속도 D제어
 	roll_rate_d = (roll_rate_err - roll_rate_err_last) * d_gain_rate / m_dt;
@@ -94,16 +99,34 @@ void HsFlightController::AngularRateControl() {
 	roll_rate_pid = roll_rate_p + roll_rate_d;
 	pitch_rate_pid = pitch_rate_p + pitch_rate_d;
 
+	yaw_rate_pid = yaw_rate_p + yaw_rate_i;
+
+
 }
 
 
 void HsFlightController::generatePWM(int* pwm1, int* pwm2, int* pwm3, int* pwm4) {
 	
-	// x콥터 방식
-	*pwm1 = round((m_pwm) + alt_pid + pitch_rate_pid + roll_rate_pid + yaw_pid);
-	*pwm2 = round((m_pwm) + alt_pid - pitch_rate_pid + roll_rate_pid - yaw_pid);
-	*pwm3 = round((m_pwm) + alt_pid - pitch_rate_pid - roll_rate_pid + yaw_pid);
-	*pwm4 = round((m_pwm) + alt_pid + pitch_rate_pid - roll_rate_pid - yaw_pid);
+	basePWM = m_pwm + alt_pid;
+	yaw_b = sqrt( 2*(basePWM)*(basePWM) - (basePWM-abs(yaw_rate_pid))*(basePWM-abs(yaw_rate_pid)) ) - basePWM;
+	if( yaw_rate_pid >= 0 ) {
+		
+
+		// x콥터 방식
+		*pwm1 = round( (m_pwm) + alt_pid + pitch_rate_pid + roll_rate_pid + yaw_b);
+		*pwm2 = round( (m_pwm) + alt_pid - pitch_rate_pid + roll_rate_pid - yaw_rate_pid );
+		*pwm3 = round( (m_pwm) + alt_pid - pitch_rate_pid - roll_rate_pid + yaw_b );
+		*pwm4 = round( (m_pwm) + alt_pid + pitch_rate_pid - roll_rate_pid - yaw_rate_pid );
+	}else {
+		
+		// x콥터 방식
+		*pwm1 = round( (m_pwm) + alt_pid + pitch_rate_pid + roll_rate_pid - yaw_b);
+		*pwm2 = round( (m_pwm) + alt_pid - pitch_rate_pid + roll_rate_pid - yaw_rate_pid );
+		*pwm3 = round( (m_pwm) + alt_pid - pitch_rate_pid - roll_rate_pid - yaw_b );
+		*pwm4 = round( (m_pwm) + alt_pid + pitch_rate_pid - roll_rate_pid - yaw_rate_pid );
+	}
+
+	
 
 
 
@@ -176,9 +199,9 @@ void HsFlightController::initialize() {
 	d_gain_rate = 0.006;
 	// 0.24, 0.006
 
-	p_gain_yaw = 0.18;//0.38;
-	i_gain_yaw = 0;//0.10;
-	d_gain_yaw = 0.0018;
+	p_gain_yaw = 0.22;//0.38;
+	i_gain_yaw = 0.80;
+	d_gain_yaw = 0;//0.0017;
 
 	
 	p_gain_alt = 0.21;
@@ -260,10 +283,10 @@ void HsFlightController::initialize() {
 void HsFlightController::destroy() {
 
 }
-void HsFlightController::setEulerAngle(double roll, double pitch, double yaw) {
+void HsFlightController::setEulerAngleAndRate(double roll, double pitch, double yaw_rate) {
 	m_roll = roll;
 	m_pitch = pitch;
-	m_yaw = yaw;
+	m_yaw_rate = yaw_rate;
 }
 void HsFlightController::setSmoothValue(double xValue, double yValue, double zValue) {
 	gx_mean = xValue;

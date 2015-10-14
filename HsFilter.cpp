@@ -59,10 +59,10 @@ void HsFilter::complementaryFilter() {
 
 void HsFilter::integralYaw() {
 
-	m_yaw += -m_gz * m_dt;	// 0.15259 = 32768.0*500.0
+	//m_yaw += -m_gz * m_dt;	// 0.15259 = 32768.0*500.0
 	
-	//yaw_gyro_dot = -(m_gy*(sin(m_roll_rad)/cos(m_pitch_rad)) + m_gz*(cos(m_roll_rad)/cos(m_pitch_rad)));
-	//yaw_gyro += yaw_gyro_dot * m_dt;
+	yaw_gyro_dot = -(m_gy*(sin(m_roll_rad)/cos(m_pitch_rad)) + m_gz*(cos(m_roll_rad)/cos(m_pitch_rad)));
+	yaw_gyro += yaw_gyro_dot * m_dt;
 
 	// Yaw 틸트 보상 알고리즘
 	//double scaled_by_roll = m_gz * ((1/pow(42, 0.6))*pow(abs(m_roll), 1.6) / 42 * 0.32 + 1);
