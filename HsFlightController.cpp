@@ -80,14 +80,15 @@ void HsFlightController::AngularRateControl() {
 	yaw_rate_err = yaw_setPoint - m_yaw_rate;
 	yaw_rate_p = yaw_rate_err * p_gain_yaw;
 
-	// 각속도 I 제어
+	// 각속도 I 제어	// Only for yaw control
 	yaw_err_integral += yaw_rate_err * m_dt;
+	
+	//if(yaw_err_integral > i_wind_up_limit_yaw) { 
+	//	yaw_err_integral = i_wind_up_limit_yaw;
+	//}else if(yaw_err_integral < 0-i_wind_up_limit_yaw) {
+	//	yaw_err_integral = 0-i_wind_up_limit_yaw;
+	//}
 	yaw_rate_i = yaw_err_integral * i_gain_yaw;
-	if(yaw_rate_i > i_wind_up_limit_yaw) { 
-		yaw_rate_i = i_wind_up_limit_yaw;
-	}else if(yaw_rate_i < 0-i_wind_up_limit_yaw) {
-		yaw_rate_i = 0-i_wind_up_limit_yaw;
-	}
 
 	// 각속도 D제어
 	roll_rate_d = (roll_rate_err - roll_rate_err_last) * d_gain_rate / m_dt;
@@ -107,28 +108,30 @@ void HsFlightController::AngularRateControl() {
 
 void HsFlightController::generatePWM(int* pwm1, int* pwm2, int* pwm3, int* pwm4) {
 	
+#if 1
+	// yaw 제어에 의한 고도변화를 최소화하기 위한 알고리즘
 	basePWM = m_pwm + alt_pid;
 	yaw_b = sqrt( 2*(basePWM)*(basePWM) - (basePWM-abs(yaw_rate_pid))*(basePWM-abs(yaw_rate_pid)) ) - basePWM;
 	if( yaw_rate_pid >= 0 ) {
-		
-
 		// x콥터 방식
 		*pwm1 = round( (m_pwm) + alt_pid + pitch_rate_pid + roll_rate_pid + yaw_b);
 		*pwm2 = round( (m_pwm) + alt_pid - pitch_rate_pid + roll_rate_pid - yaw_rate_pid );
 		*pwm3 = round( (m_pwm) + alt_pid - pitch_rate_pid - roll_rate_pid + yaw_b );
 		*pwm4 = round( (m_pwm) + alt_pid + pitch_rate_pid - roll_rate_pid - yaw_rate_pid );
 	}else {
-		
 		// x콥터 방식
 		*pwm1 = round( (m_pwm) + alt_pid + pitch_rate_pid + roll_rate_pid - yaw_b);
 		*pwm2 = round( (m_pwm) + alt_pid - pitch_rate_pid + roll_rate_pid - yaw_rate_pid );
 		*pwm3 = round( (m_pwm) + alt_pid - pitch_rate_pid - roll_rate_pid - yaw_b );
 		*pwm4 = round( (m_pwm) + alt_pid + pitch_rate_pid - roll_rate_pid - yaw_rate_pid );
 	}
+#else
+	*pwm1 = round( (m_pwm) + alt_pid + pitch_rate_pid + roll_rate_pid + yaw_rate_pid);
+	*pwm2 = round( (m_pwm) + alt_pid - pitch_rate_pid + roll_rate_pid - yaw_rate_pid );
+	*pwm3 = round( (m_pwm) + alt_pid - pitch_rate_pid - roll_rate_pid + yaw_rate_pid );
+	*pwm4 = round( (m_pwm) + alt_pid + pitch_rate_pid - roll_rate_pid - yaw_rate_pid );
 
-	
-
-
+#endif
 
 	*pwm1 = *pwm1 < 0 ? 0 : (*pwm1 > 254 ? 254 : *pwm1);
 	*pwm2 = *pwm2 < 0 ? 0 : (*pwm2 > 254 ? 254 : *pwm2);
@@ -165,6 +168,14 @@ void HsFlightController::altitudeControl(double setpoint, double alt_lpf) {
 
 
 	alt_pid = alt_p + alt_i + alt_d_lpf;
+	//Serial.print(alt_p);
+	//Serial.print("\t");
+	//Serial.print(alt_i);
+	//Serial.print("\t");
+	//Serial.print(alt_d_lpf);
+	//Serial.print("\t");
+	//Serial.print(alt_pid);
+	//Serial.println("\t");
 
 	
 }
@@ -191,21 +202,21 @@ void HsFlightController::initialize() {
 
 #if 1
 
-	p_gain = 5.0;//2.0;//2.2;
-	i_gain = 7.5;
-	d_gain = 0;//0.015;
+	p_gain = 5.0;
+	i_gain = 0.0;//7.5;
+	d_gain = 0.0;
 
-	p_gain_rate = 0.18;//0.15;//0.17;//0.16;
-	d_gain_rate = 0.006;
-	// 0.24, 0.006
+	p_gain_rate = 0.08;//0.18;
+	d_gain_rate = 0.004;//0.006;
+
 
 	p_gain_yaw = 0.22;//0.38;
 	i_gain_yaw = 0.80;
 	d_gain_yaw = 0;//0.0017;
 
 	
-	p_gain_alt = 0.21;
-	i_gain_alt = 0;//0.08;
+	p_gain_alt = 0.17;
+	i_gain_alt = 0.01;//0.08;
 	d_gain_alt = 0.17;
 
 
@@ -257,7 +268,7 @@ void HsFlightController::initialize() {
 	pitch_err = 0;
 	yaw_err = 0;
 	roll_err_integral = 0; pitch_err_integral = 0; yaw_err_integral = 0;
-	i_wind_up_limit = 20; i_wind_up_limit_yaw = 10;
+	i_wind_up_limit = 20; i_wind_up_limit_yaw = 12.5;
 	
 	f_right = 0; f_left = 0; f_front = 0; f_back = 0;
 
@@ -265,7 +276,7 @@ void HsFlightController::initialize() {
 	alt_p = 0, alt_i = 0, alt_d = 0;
 	alt_err[0] = 0;	alt_err[1] = 0;
 	alt_err_integral = 0;
-	i_wind_up_limit_alt = 200;
+	i_wind_up_limit_alt = 5;
 	alt_d_lpf = 0;
 	alt_pid = 0;
 
